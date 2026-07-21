@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>診断ライブ数字｜ari-work</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+<style>
+  :root{
+    --bg:#f7eee1; --bg2:#f1e4d3; --surface:#fffdf8; --line:#ecdfce;
+    --ink:#463829; --sub:#8b7660; --coral:#e67e4e; --sage:#77ab84; --honey:#cf9c53;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#221b12; --bg2:#1a140d; --surface:#2c241a; --line:#3d3325; --ink:#f0e6d8; --sub:#b09a80; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans",system-ui,sans-serif;
+    background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--ink);
+    min-height:100vh;padding:22px 14px 48px}
+  .wrap{max-width:520px;margin:0 auto}
+  h1{font-size:19px;margin:0 0 4px}
+  .sub{font-size:12px;color:var(--sub);margin:0 0 18px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 15px;box-shadow:0 2px 8px rgba(70,56,41,.06)}
+  .tile.big{grid-column:1/-1}
+  .lab{font-size:11.5px;color:var(--sub);font-weight:700;letter-spacing:.02em}
+  .val{font-size:30px;font-weight:800;line-height:1.25;margin-top:2px;font-variant-numeric:tabular-nums}
+  .val.small{font-size:24px}
+  .unit{font-size:12px;color:var(--sub);font-weight:600;margin-left:2px}
+  .accent{color:var(--coral)} .green{color:var(--sage)} .honey{color:var(--honey)}
+  .derived{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px 15px}
+  .drow{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+  .drow:last-child{border-bottom:0}
+  .drow b{font-variant-numeric:tabular-nums}
+  .note{margin-top:16px;font-size:11.5px;color:var(--sub);line-height:1.8}
+  .err{margin-top:16px;background:var(--surface);border:1.5px solid var(--honey);border-radius:14px;padding:13px 15px;font-size:12.5px;line-height:1.9;display:none}
+  .btn{display:block;text-align:center;margin-top:16px;background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;padding:12px;color:var(--ink);text-decoration:none;font-size:13px;font-weight:700}
+  .ts{font-size:11px;color:var(--sub);margin-top:14px;text-align:center}
+  .skel{color:var(--sub);opacity:.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📊 診断ライブ数字</h1>
+  <p class="sub">開くたびに最新を自動取得（累計）｜おつかれ度診断（ari-work.github.io）</p>
+
+  <div class="grid">
+    <div class="tile big">
+      <div class="lab">🌿 診断ページが開かれた回数</div>
+      <div class="val accent" id="v-page"><span class="skel">…</span><span class="unit">回</span></div>
+    </div>
+    <div class="tile">
+      <div class="lab">▶ 診断スタート</div>
+      <div class="val small" id="v-start"><span class="skel">…</span></div>
+    </div>
+    <div class="tile">
+      <div class="lab">🏁 診断完了</div>
+      <div class="val small" id="v-complete"><span class="skel">…</span></div>
+    </div>
+    <div class="tile">
+      <div class="lab">💼 面談ボタン（A8）</div>
+      <div class="val small honey" id="v-a8"><span class="skel">…</span></div>
+    </div>
+    <div class="tile">
+      <div class="lab">💚 LINEボタン</div>
+      <div class="val small green" id="v-line"><span class="skel">…</span></div>
+    </div>
+  </div>
+
+  <div class="derived">
+    <div class="drow"><span>完了率（スタート→完了）</span><b id="d-comp">—</b></div>
+    <div class="drow"><span>面談タップ率（完了→A8）</span><b id="d-a8">—</b></div>
+    <div class="drow"><span>LINEタップ率（完了→LINE)</span><b id="d-line">—</b></div>
+    <div class="drow"><span>比較記事タップ</span><b id="d-cmp">—</b></div>
+  </div>
+
+  <div class="err" id="err">
+    ⚠️ まだ数字が取得できません。考えられる理由：<br>
+    ① GoatCounter（無料の計測サービス）のアカウント <b>yuttii</b> が未作成<br>
+    　→ <a href="https://www.goatcounter.com" target="_blank">goatcounter.com</a> で登録（コードを「yuttii」に）。2分で終わり、以後は放置でOK<br>
+    ② GoatCounterの設定で「Visitor counter」（数字の公開取得）が無効<br>
+    　→ GoatCounterの Settings → 「Allow adding visitor counters」をON<br>
+    ③ まだ誰も診断を開いていない（データが0件）
+  </div>
+
+  <a class="btn" href="https://yuttii.goatcounter.com" target="_blank">🔎 くわしい内訳（GoatCounter管理画面）をひらく</a>
+  <div class="ts" id="ts"></div>
+
+  <p class="note">※数字は累計。個人情報は取得していません（GoatCounterはCookieレスの匿名計測）。<br>※このページ自体は計測されません。</p>
+</div>
+
+<script>
+(function(){
+  var SITE='https://yuttii.goatcounter.com';
+  var items=[
+    {key:'page', paths:['/', '']},
+    {key:'start', paths:['shindan-start','/shindan-start']},
+    {key:'complete', paths:['shindan-complete','/shindan-complete']},
+    {key:'a8', paths:['shindan-cta-a8','/shindan-cta-a8']},
+    {key:'line', paths:['shindan-cta-line','/shindan-cta-line']},
+    {key:'cmp', paths:['shindan-cta-compare','/shindan-cta-compare']}
+  ];
+  var vals={}, fails=0, done=0;
+
+  function parseCount(j){
+    if(!j) return null;
+    var c=(j.count_unique!==undefined?j.count:j.count);
+    if(c===undefined||c===null) return null;
+    var n=parseInt(String(c).replace(/[^0-9]/g,''),10);
+    return isNaN(n)?null:n;
+  }
+  function tryFetch(paths,i,cb){
+    if(i>=paths.length){cb(null);return;}
+    var p=paths[i];
+    var url=SITE+'/counter/'+encodeURIComponent(p)+'.json';
+    if(p==='/') url=SITE+'/counter//.json';
+    fetch(url).then(function(r){
+      if(!r.ok) throw 0;
+      return r.json();
+    }).then(function(j){
+      var n=parseCount(j);
+      if(n===null) throw 0;
+      cb(n);
+    }).catch(function(){ tryFetch(paths,i+1,cb); });
+  }
+  function fmt(n){ return (n===null||n===undefined)?'—':n.toLocaleString('ja-JP'); }
+  function pct(a,b){ if(!b||a===null||a===undefined) return '—'; return Math.round(a/b*100)+'%'; }
+
+  items.forEach(function(it){
+    tryFetch(it.paths,0,function(n){
+      vals[it.key]=n; done++;
+      if(n===null) fails++;
+      render();
+    });
+  });
+
+  function render(){
+    if(done<items.length) {}
+    var ids={page:'v-page',start:'v-start',complete:'v-complete',a8:'v-a8',line:'v-line'};
+    Object.keys(ids).forEach(function(k){
+      if(vals[k]!==undefined){
+        var el=document.getElementById(ids[k]);
+        el.innerHTML=fmt(vals[k])+(k==='page'?'<span class="unit">回</span>':'');
+      }
+    });
+    if(done===items.length){
+      document.getElementById('d-comp').textContent=pct(vals.complete,vals.start);
+      document.getElementById('d-a8').textContent=pct(vals.a8,vals.complete);
+      document.getElementById('d-line').textContent=pct(vals.line,vals.complete);
+      document.getElementById('d-cmp').textContent=fmt(vals.cmp);
+      document.getElementById('ts').textContent='取得: '+new Date().toLocaleString('ja-JP');
+      if(fails===items.length){ document.getElementById('err').style.display='block'; }
+    }
+  }
+})();
+</script>
+</body>
+</html>
