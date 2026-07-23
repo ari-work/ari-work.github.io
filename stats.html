@@ -78,14 +78,12 @@
 
   <div class="err" id="err">
     ⚠️ まだ数字が取得できません。考えられる理由：<br>
-    ① GoatCounter（無料の計測サービス）のアカウント <b>yuttii</b> が未作成<br>
-    　→ <a href="https://www.goatcounter.com" target="_blank">goatcounter.com</a> で登録（コードを「yuttii」に）。2分で終わり、以後は放置でOK<br>
-    ② GoatCounterの設定で「Visitor counter」（数字の公開取得）が無効<br>
-    　→ GoatCounterの Settings → 「Allow adding visitor counters」をON<br>
-    ③ まだ誰も診断を開いていない（データが0件）
+    ① GoatCounter（ariwork）の設定で「Visitor counter」（数字の公開取得）が無効<br>
+    　→ <a href="https://ariwork.goatcounter.com" target="_blank">管理画面</a>の 設定 → 「Allow adding visitor counters」をON<br>
+    ② まだ誰も診断を開いていない（データが0件）——診断を1回開いてから再読み込みしてみて
   </div>
 
-  <a class="btn" href="https://yuttii.goatcounter.com" target="_blank">🔎 くわしい内訳（GoatCounter管理画面）をひらく</a>
+  <a class="btn" href="https://ariwork.goatcounter.com" target="_blank">🔎 くわしい内訳（GoatCounter管理画面）をひらく</a>
   <div class="ts" id="ts"></div>
 
   <p class="note">※数字は累計。個人情報は取得していません（GoatCounterはCookieレスの匿名計測）。<br>※このページ自体は計測されません。</p>
@@ -93,7 +91,7 @@
 
 <script>
 (function(){
-  var SITE='https://yuttii.goatcounter.com';
+  var SITE='https://ariwork.goatcounter.com';
   var items=[
     {key:'page', paths:['/', '']},
     {key:'start', paths:['shindan-start','/shindan-start']},
