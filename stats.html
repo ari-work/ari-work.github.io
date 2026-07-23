@@ -93,12 +93,12 @@
 (function(){
   var SITE='https://ariwork.goatcounter.com';
   var items=[
-    {key:'page', paths:['/', '']},
-    {key:'start', paths:['shindan-start','/shindan-start']},
-    {key:'complete', paths:['shindan-complete','/shindan-complete']},
-    {key:'a8', paths:['shindan-cta-a8','/shindan-cta-a8']},
-    {key:'line', paths:['shindan-cta-line','/shindan-cta-line']},
-    {key:'cmp', paths:['shindan-cta-compare','/shindan-cta-compare']}
+    {key:'page', paths:['/']},
+    {key:'start', paths:['/shindan-start','shindan-start']},
+    {key:'complete', paths:['/shindan-complete','shindan-complete']},
+    {key:'a8', paths:['/shindan-cta-a8','shindan-cta-a8']},
+    {key:'line', paths:['/shindan-cta-line','shindan-cta-line']},
+    {key:'cmp', paths:['/shindan-cta-compare','shindan-cta-compare']}
   ];
   var vals={}, fails=0, done=0;
 
@@ -112,8 +112,7 @@
   function tryFetch(paths,i,cb){
     if(i>=paths.length){cb(null);return;}
     var p=paths[i];
-    var url=SITE+'/counter/'+encodeURIComponent(p)+'.json';
-    if(p==='/') url=SITE+'/counter//.json';
+    var url=SITE+'/counter/'+(p.charAt(0)==='/'?p:encodeURIComponent(p))+'.json';
     fetch(url).then(function(r){
       if(!r.ok) throw 0;
       return r.json();
