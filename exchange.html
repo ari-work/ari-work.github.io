@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Threads トークン交換ツール</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px 16px 60px;font-family:"Hiragino Kaku Gothic ProN",system-ui,sans-serif;
+    background:#f6f1e7;color:#3d3427;line-height:1.8}
+  .wrap{max-width:560px;margin:0 auto}
+  h1{font-size:19px;margin:0 0 6px}
+  .lede{font-size:12.5px;color:#8a7a63;margin:0 0 18px}
+  .card{background:#fff;border:1px solid #e5d9c3;border-radius:14px;padding:16px;margin-bottom:14px}
+  .card h2{font-size:15px;margin:0 0 8px;color:#c9663a}
+  .card p{font-size:12.5px;margin:6px 0;color:#6f6250}
+  label{display:block;font-size:12px;font-weight:700;margin:10px 0 4px}
+  input{width:100%;padding:11px 12px;border:1.5px solid #d8c9ac;border-radius:10px;font-size:14px;background:#fffdf8}
+  .code-ok{background:#e8f2ea;border:1px solid #77ab84;border-radius:10px;padding:9px 12px;font-size:12px;
+    word-break:break-all;margin-top:6px}
+  .code-ng{background:#fbe9de;border:1px solid #e67e4e;border-radius:10px;padding:9px 12px;font-size:12.5px;margin-top:6px}
+  button{width:100%;margin-top:12px;padding:13px;border:0;border-radius:11px;background:#e67e4e;color:#fff;
+    font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+  button:active{opacity:.85}
+  .hint{background:#f7ecd9;border-radius:10px;padding:9px 12px;font-size:11.5px;margin-top:10px;line-height:1.7}
+  .foot{text-align:center;font-size:10.5px;color:#a08f76;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔑 Threads トークン交換ツール</h1>
+  <p class="lede">ari-work専用。①→②の順にやると60日トークンが取れます。シークレットはこのページに保存されません。</p>
+
+  <div class="card">
+    <h2>① 認証コード → 短期トークン</h2>
+    <p>認証コード：</p>
+    <div id="codebox" class="code-ng">コードが見つかりません。先に認証URLからやり直してください。</div>
+    <form id="f1" method="POST" action="https://graph.threads.net/oauth/access_token" target="_blank">
+      <input type="hidden" name="client_id" value="1314312157145258">
+      <input type="hidden" name="grant_type" value="authorization_code">
+      <input type="hidden" name="redirect_uri" value="https://ari-work.github.io/exchange.html">
+      <input type="hidden" name="code" id="codefield" value="">
+      <label>アプリシークレット（Metaの「ベーシック」画面の英数字32桁）</label>
+      <input type="password" name="client_secret" id="sec1" autocomplete="off" placeholder="ここに貼る">
+      <button type="submit">短期トークンに交換（新しいタブが開きます）</button>
+    </form>
+    <div class="hint">新しいタブに <b>{"access_token":"THAA…","user_id":…}</b> という文字が出ます。<b>THAA…の部分だけ</b>（前後の引用符は除く）を長押しコピーして、このタブに戻って②へ。<br>もし「error」と出たら、その画面のスクショをAIに送ってください。</div>
+  </div>
+
+  <div class="card">
+    <h2>② 短期トークン → 60日トークン</h2>
+    <label>①でコピーした短期トークン</label>
+    <input type="text" id="short" autocomplete="off" placeholder="THAA…">
+    <label>アプリシークレット（①と同じもの）</label>
+    <input type="password" id="sec2" autocomplete="off" placeholder="もう一度貼る">
+    <button onclick="longExchange()">60日トークンを取得（新しいタブが開きます）</button>
+    <div class="hint">新しいタブに出た <b>access_token（THAA…）</b> が最終的な60日トークンです。それを全部コピーして、<b>AIとのチャットに貼れば完了</b>🎉</div>
+  </div>
+
+  <div class="foot">用が済んだらこのページは撤去されます ／ ari-work</div>
+</div>
+<script>
+  (function(){
+    var m = location.search.match(/[?&]code=([^&]+)/);
+    if(m){
+      var code = decodeURIComponent(m[1]).replace(/#_$/,'').replace(/#.*$/,'');
+      document.getElementById('codefield').value = code;
+      var box = document.getElementById('codebox');
+      box.className = 'code-ok';
+      box.textContent = code.slice(0,24) + '…（取得OK）';
+    }
+  })();
+  function longExchange(){
+    var t = document.getElementById('short').value.trim();
+    var s = document.getElementById('sec2').value.trim();
+    if(!t || !s){ alert('短期トークンとシークレットの両方を入れてください'); return; }
+    window.open('https://graph.threads.net/access_token?grant_type=th_exchange_token&client_secret='
+      + encodeURIComponent(s) + '&access_token=' + encodeURIComponent(t), '_blank');
+  }
+</script>
+</body>
+</html>
