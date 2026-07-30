@@ -126,12 +126,15 @@
 
 <script>
 (function(){
-  var A8="https://px.a8.net/svt/ejp?a8mat=45C4M9+2DSQQ+276A+5YJRL";
-  /* アポプラス薬剤師（提携 2026-07-30・成果地点=面談完了/20,000円）
-     ariがA8で取得したリンクをここに入れると、正社員向けCTAが自動で出る。
-     空のままなら従来どおり1本のCTAで動作する（＝安全に段階導入できる）。
-     ※否認条件：非正社員希望／満60歳以上／薬剤師資格なし／転職意思がない旨を示した場合。
-       このため「聞くだけでOK」系の文言はこのボタンに絶対に使わない（→ projects/pharmacist/partners.md）*/
+  /* ▼ 提携ASP（一次情報は projects/pharmacist/partners.md）───────────────
+     #1 ファルマスタッフ（主力）：電話面談完了／正社員65,000円・それ以外23,000円
+        雇用形態は問わない。成果条件＝申込から14日以内の電話面談完了・薬剤師資格・
+        転職希望6ヶ月以内・59歳以下。否認条件に「SNS経由の申込」があるため、
+        Threadsからは必ずこの診断ページか note記事を経由させる（直リンク禁止）。
+     #2 アポプラス薬剤師：面談完了／20,000円・正社員のみ・満60歳未満。
+        A8リンクを取得したら A8_APO に入れるだけで2社目のボタンが出る。
+     共通：「聞くだけでOK」系の文言は使用禁止（両社とも転職意思を要件にしている）*/
+  var A8="https://px.a8.net/svt/ejp?a8mat=45C4M9+2DSQQ+276A+5YJRL"; /* ファルマスタッフ */
   var A8_APO="";
   var COMPARE="https://note.com/arikuinonichijo/n/n5cbb07fc5354";
   var PROFILE="https://note.com/arikuinonichijo";
@@ -274,17 +277,26 @@
          意思がある人＝ASPへ／まだの人＝LINE・記事で温めてからASPを下に置く。
          「聞くだけでOK」系の文言は使わない（アポプラスの否認条件・partners.md参照）*/
       var ready=sc.r>=2;
+      /* 主力＝ファルマスタッフ。雇用形態を問わないので分岐なしで全員に出せる。
+         承認条件が「申込から14日以内の電話面談完了」なので、
+         “電話が来る・出られる時間を書いておく”を先に伝えるのが読者にも成果にも効く */
+      var gen='<a class="btn btn-primary" href="'+A8+'" target="_blank" rel="noopener sponsored" data-tr="cta-a8">'
+        +'無料で相談する｜ファルマスタッフ（PR）'
+        +'<small>求人票に出てこない「人員構成」まで、担当者が直接訪問して確認してるのが強み。'
+        +'正社員でも派遣・パートでも相談できるよ</small></a>'
+        +'<p class="fine">💡 登録すると担当者から<b>電話</b>が来るよ。登録のときに<b>出られる時間帯</b>を書いておくと、あとがスムーズ。'
+        +'エリア・年収の下限・譲れない条件の3つを決めてから話すと、出てくる求人がぐっと具体的になるよ。</p>';
+      /* 2社目＝アポプラス（正社員のみ）。リンク未取得なら出さない */
       var apo=A8_APO
-        ? '<a class="btn btn-primary" href="'+A8_APO+'" target="_blank" rel="noopener sponsored" data-tr="cta-apo">正社員で探すなら｜アポプラス薬剤師に相談する（PR）<small>同社によると求人の8割以上は非公開。全国対応で、条件の交渉まで担当者が代わりにやってくれるよ</small></a>'
+        ? '<a class="btn btn-sec" href="'+A8_APO+'" target="_blank" rel="noopener sponsored" data-tr="cta-apo">2社目を見るなら｜アポプラス薬剤師（PR）<small>同社によると求人の8割以上は非公開。全国対応で、条件の交渉まで担当者が代わりにやってくれるよ</small></a>'
           +'<p class="fine">※アポプラス薬剤師は、正社員での転職を希望する薬剤師資格をお持ちの方が対象です。派遣・パート希望の方、独立・開局のご相談は対象外です。</p>'
         : '';
-      var gen='<a class="btn '+(A8_APO?'btn-sec':'btn-primary')+'" href="'+A8+'" target="_blank" rel="noopener sponsored" data-tr="cta-a8">無料の転職相談に申し込む（PR）<small>エリア・年収の下限・譲れない条件の3つを伝えるところから。登録は無料</small></a>';
       var line='<a class="btn btn-line" href="'+LINE+'" target="_blank" rel="noopener" data-tr="cta-line">🌿 まだ動かない人へ｜LINEで“働き方のヒント”を受け取る<small>ゆってぃーから、年収・人間関係の話を数日おきに。いつでもブロックOK</small></a>';
       var cmp='<a class="btn btn-sec" href="'+COMPARE+'" target="_blank" rel="noopener" data-tr="cta-compare">サービスの選び方を先に読む（比較記事）</a>';
       var prf='<a class="btn btn-sec" href="'+PROFILE+'" target="_blank" rel="noopener" data-tr="cta-profile">ほかの記事も読んでみる</a>';
       box.innerHTML=
         '<div class="adnote"><span class="pin"></span><span><b>広告を含みます。</b>'+lead+'</span></div>'+
-        (ready ? (apo+gen+line+cmp+prf) : (cmp+line+apo+gen+prf));
+        (ready ? (gen+apo+line+cmp+prf) : (cmp+line+gen+apo+prf));
       chat.appendChild(box);
       Array.prototype.forEach.call(box.querySelectorAll('a[data-tr]'),function(a){
         a.addEventListener('click',function(){track(a.getAttribute('data-tr'));});
