@@ -1,26 +1,3 @@
-<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>薬剤師おつかれ度診断｜30秒でモヤモヤの正体がわかる</title>
-<meta name="description" content="薬剤師さんの「なんかしんどい」の正体を30秒で整理する会話型診断。お金・人間関係・時間・将来、あなたのモヤモヤの中心はどれ？">
-<meta property="og:type" content="website">
-<meta property="og:title" content="薬剤師おつかれ度診断｜30秒でモヤモヤの正体がわかる">
-<meta property="og:description" content="質問に答えるだけで「なんかしんどい」の中心（お金・人間関係・時間・将来）がわかる会話型診断。無料・登録不要。">
-<meta property="og:url" content="https://ari-work.github.io/">
-<meta property="og:image" content="https://ari-work.github.io/og.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:site_name" content="薬剤師おつかれ度診断">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="薬剤師おつかれ度診断｜30秒でモヤモヤの正体がわかる">
-<meta name="twitter:description" content="質問に答えるだけで「なんかしんどい」の中心がわかる会話型診断。無料・登録不要。">
-<meta name="twitter:image" content="https://ari-work.github.io/og.png">
-<meta name="theme-color" content="#f7eee1">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
-</head>
-<body style="margin:0">
 <style>
   :root{
     --bg:#f7eee1; --bg2:#f1e4d3;
@@ -150,6 +127,12 @@
 <script>
 (function(){
   var A8="https://px.a8.net/svt/ejp?a8mat=45C4M9+2DSQQ+276A+5YJRL";
+  /* アポプラス薬剤師（提携 2026-07-30・成果地点=面談完了/20,000円）
+     ariがA8で取得したリンクをここに入れると、正社員向けCTAが自動で出る。
+     空のままなら従来どおり1本のCTAで動作する（＝安全に段階導入できる）。
+     ※否認条件：非正社員希望／満60歳以上／薬剤師資格なし／転職意思がない旨を示した場合。
+       このため「聞くだけでOK」系の文言はこのボタンに絶対に使わない（→ projects/pharmacist/partners.md）*/
+  var A8_APO="";
   var COMPARE="https://note.com/arikuinonichijo/n/n5cbb07fc5354";
   var PROFILE="https://note.com/arikuinonichijo";
   var LINE="https://lin.ee/qDfh67V";
@@ -271,8 +254,8 @@
     axes.sort(function(a,b){return b[1]-a[1];});
     var T=TYPES[axes[0][1]===0?"future":axes[0][0]];
     var lead;
-    if(sc.r>=2){lead="動くなら“情報を集めてから”がいちばん失敗しにくいよ。まず無料で相場や実態を聞いてみるのがおすすめ。";}
-    else if(sc.r===1){lead="まずは「情報だけ」がちょうどいい距離感。知っておくだけで、選択肢は増えるよ。";}
+    if(sc.r>=2){lead="動くなら“希望条件を言葉にしてから”がいちばん失敗しにくいよ。エリア・年収・譲れない条件の3つが決まってれば、話は一気に進む。";}
+    else if(sc.r===1){lead="まだ決めきらなくて大丈夫。まずは自分の希望を整理するところから始めよう。";}
     else{lead="今すぐ動かなくて大丈夫。でも“今の立ち位置”を知っておくと、いざって時に迷わないよ。";}
 
     botSay("お待たせ！診断できたよ。まずは、いまの“おつかれ度”から🌡️",exp,function(){
@@ -287,16 +270,25 @@
     });
     function showCTA(){
       var box=document.createElement('div');box.className='cta';
+      /* 動く気があるか（sc.r）で出す順番を変える。
+         意思がある人＝ASPへ／まだの人＝LINE・記事で温めてからASPを下に置く。
+         「聞くだけでOK」系の文言は使わない（アポプラスの否認条件・partners.md参照）*/
+      var ready=sc.r>=2;
+      var apo=A8_APO
+        ? '<a class="btn btn-primary" href="'+A8_APO+'" target="_blank" rel="noopener sponsored" data-tr="cta-apo">正社員で探すなら｜アポプラス薬剤師に相談する（PR）<small>同社によると求人の8割以上は非公開。全国対応で、条件の交渉まで担当者が代わりにやってくれるよ</small></a>'
+          +'<p class="fine">※アポプラス薬剤師は、正社員での転職を希望する薬剤師資格をお持ちの方が対象です。派遣・パート希望の方、独立・開局のご相談は対象外です。</p>'
+        : '';
+      var gen='<a class="btn '+(A8_APO?'btn-sec':'btn-primary')+'" href="'+A8+'" target="_blank" rel="noopener sponsored" data-tr="cta-a8">無料の転職相談に申し込む（PR）<small>エリア・年収の下限・譲れない条件の3つを伝えるところから。登録は無料</small></a>';
+      var line='<a class="btn btn-line" href="'+LINE+'" target="_blank" rel="noopener" data-tr="cta-line">🌿 まだ動かない人へ｜LINEで“働き方のヒント”を受け取る<small>ゆってぃーから、年収・人間関係の話を数日おきに。いつでもブロックOK</small></a>';
+      var cmp='<a class="btn btn-sec" href="'+COMPARE+'" target="_blank" rel="noopener" data-tr="cta-compare">サービスの選び方を先に読む（比較記事）</a>';
+      var prf='<a class="btn btn-sec" href="'+PROFILE+'" target="_blank" rel="noopener" data-tr="cta-profile">ほかの記事も読んでみる</a>';
       box.innerHTML=
         '<div class="adnote"><span class="pin"></span><span><b>広告を含みます。</b>'+lead+'</span></div>'+
-        '<a class="btn btn-primary" href="'+A8+'" target="_blank" rel="noopener sponsored">無料で相談してみる（面談だけOK）<small>その場で登録しなくて大丈夫・「今日は話を聞くだけ」で帰る人がほとんど</small></a>'+
-        '<a class="btn btn-line" href="'+LINE+'" target="_blank" rel="noopener">🌿 まだ動かない人へ｜LINEで“働き方のヒント”を受け取る<small>ゆってぃーから、年収・人間関係の話を数日おきに。いつでもブロックOK</small></a>'+
-        '<a class="btn btn-sec" href="'+COMPARE+'" target="_blank" rel="noopener">サービスの選び方を先に読む（比較記事）</a>'+
-        '<a class="btn btn-sec" href="'+PROFILE+'" target="_blank" rel="noopener">ほかの記事も読んでみる</a>';
+        (ready ? (apo+gen+line+cmp+prf) : (cmp+line+apo+gen+prf));
       chat.appendChild(box);
-      var a8=box.querySelector('a[rel~="sponsored"]');if(a8)a8.addEventListener('click',function(){track('cta-a8');});
-      var ln=box.querySelector('a.btn-line');if(ln)ln.addEventListener('click',function(){track('cta-line');});
-      var cp=box.querySelectorAll('a.btn-sec');if(cp[0])cp[0].addEventListener('click',function(){track('cta-compare');});
+      Array.prototype.forEach.call(box.querySelectorAll('a[data-tr]'),function(a){
+        a.addEventListener('click',function(){track(a.getAttribute('data-tr'));});
+      });
       var fine=document.createElement('p');fine.className='fine';
       fine.innerHTML='※これは医学的な診断ではなく、気持ちを整理するための目安です（結果は保存されません）。年収・働き方の傾向は各種調査をもとにした一般的な目安で、媒体・調査年により幅があります。効果・結果には個人差があり、転職を無理に勧めるものではありません。';
       chat.appendChild(fine);
@@ -312,11 +304,3 @@
      例: data-goatcounter="https://ariwork.goatcounter.com/count" 。GitHub Pages等に置くと計測が有効になる（アーティファクト上では自動でオフ）。 -->
 <script>window.goatcounter=window.goatcounter||{};</script>
 <script data-goatcounter="https://ariwork.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<style>
-/* standalone-mobile fix: allow the card to shrink inside the flex wrapper */
-.phone{min-width:0}
-.wrap{width:100%;box-sizing:border-box}
-.phone *{max-width:100%}
-</style>
-</body>
-</html>
