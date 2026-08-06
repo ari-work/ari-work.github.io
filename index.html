@@ -107,6 +107,8 @@
   .btn-line{background:linear-gradient(180deg,#22c760,#06a94a);color:#fff;box-shadow:0 5px 0 -1px #05913f,var(--shadow-sm)}
   .btn-line:hover{filter:brightness(1.03)}
   .btn-sec{background:var(--surface);color:var(--ink);border:1.5px solid var(--line2)}
+  .btn-sec small{display:block;font-size:11px;font-weight:700;color:var(--sub);margin-top:4px;text-align:left}
+  .btn-sec small b{color:var(--ink)}
   .btn-sec:hover{border-color:var(--coral)}
   .btn:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
   .restart{background:none;border:0;color:var(--sub);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:8px;align-self:center}
@@ -136,7 +138,8 @@
      共通：「聞くだけでOK」系の文言は使用禁止（両社とも転職意思を要件にしている）*/
   var A8="https://px.a8.net/svt/ejp?a8mat=45C4M9+2DSQQ+276A+5YJRL"; /* ファルマスタッフ */
   var A8_APO="https://px.a8.net/svt/ejp?a8mat=4B8BWS+8L02TU+52EE+5YJRM";
-  var COMPARE="https://note.com/arikuinonichijo/n/n5cbb07fc5354";
+  var A8_YAKU="https://px.a8.net/svt/ejp?a8mat=4B8BWS+91O7RM+5HH6+5YZ75"; /* ヤクジョブ */
+  var COMPARE="https://note.com/arikuinonichijo/n/ned4cf774a287";
   var PROFILE="https://note.com/arikuinonichijo";
   var LINE="https://lin.ee/qDfh67V";
   var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -155,6 +158,19 @@
   function face(exp){var s=PIX[exp||'peace'];return s?'<img src="'+s+'" alt="ゆってぃー">':mascot();}
   document.getElementById('hav').innerHTML=face('peace');
 
+  /* ▼ 提携3社。各社の説明は research/services-research.md（各社の公開情報）だけを使う。
+     partners.md（＝うちの成果条件）から読者向けの説明を作らない → agents/07 第5の柱 */
+  var SV=[
+    {k:"pharma",name:"ファルマスタッフ",link:A8,
+     pitch:"担当のコンサルタントが<b>実際に職場を訪問して</b>情報を集めている、と案内している会社。全国12拠点でエリア担当制。"},
+    {k:"yaku",name:"ヤクジョブ",link:A8_YAKU,
+     pitch:"正社員・パートから<b>派遣・紹介予定派遣・単発まで</b>扱っている、と案内している会社。1996年創業で、調剤薬局の求人が多いのも特徴。"},
+    {k:"apo",name:"アポプラス薬剤師",link:A8_APO,
+     pitch:"面談するコンサルタントが<b>医療機関での職場経験者、または医療機関で研修を受けた人</b>、と案内している会社。全国11拠点。"}
+  ];
+  /* どこを1社目に出しても同じことなので、面談の準備メモは3社共通で先頭のボタンの下に置く */
+  var SVTIP="登録すると担当者から電話が来るよ。登録のときに<b>出られる時間帯</b>を書いておくと、あとがスムーズ。エリア・年収の下限・譲れない条件の3つを決めてから話すと、出てくる求人がぐっと具体的になるよ。";
+
   var Q=[
     {q:"朝、仕事に行く前の気持ちって、いまどんな感じ？",o:[
       {t:"わりと平気かな",s:{b:0},r:"お、それはなにより😊 いいことだよ。"},
@@ -162,32 +178,30 @@
       {t:"毎回どんより重い",s:{b:2},r:"そっか…毎朝それは、地味にこたえるよね。よく通ってるよ、ほんと。"},
       {t:"考えるだけでしんどい",s:{b:3},r:"うっ、それはかなりのSOSかも…。ここまで話してくれてありがとうね。"}]},
     {q:"今の職場で、いちばんモヤっとするのはどれ？",o:[
-      {t:"給料・待遇",s:{money:2},r:"なるほど、お金かぁ。生活に直結するもんね、大事なとこ。"},
-      {t:"人間関係",s:{relations:2},r:"あー…人間関係ね。それ、いちばん心をすり減らすやつだ。"},
-      {t:"残業・休日・忙しさ",s:{time:2},r:"時間かぁ。ちゃんと休めないの、ほんとにしんどいよね。"},
-      {t:"将来・キャリアの不安",s:{future:2},r:"将来のこと考えてるの、それだけで前向きな証拠だよ。"}]},
-    {q:"残業とか、休みの取りやすさはどう？",o:[
-      {t:"ほとんど問題ない",s:{time:0},r:"それ、地味だけどすごく大事。ちゃんと休めてるの強みだよ。"},
-      {t:"たまにキツい",s:{time:1},r:"うんうん、波がある感じね。無理しすぎないでね。"},
-      {t:"多いし休みも取りにくい",s:{time:2,b:1},r:"それは心配だな…。体が資本なのに、頑張りすぎだよ。"}]},
-    {q:"職場の人間関係、正直どうかな？",o:[
-      {t:"おおむね良好",s:{relations:0},r:"いいね、それは何より恵まれてる環境だよ。"},
-      {t:"可もなく不可もなく",s:{relations:1},r:"まあ、無難がいちばんってこともあるよね。"},
-      {t:"気をつかって疲れる…",s:{relations:2,b:1},r:"わかる…気疲れって、目に見えないぶん本当にキツいんだよね。"}]},
-    {q:"今のお給料には、納得できてる？",o:[
-      {t:"まあ納得してる",s:{money:0},r:"納得できてるの、実はすごく大きいことだよ。"},
-      {t:"少し不満かな",s:{money:1},r:"その“少し”、積もると効いてくるやつだ。侮れないよ。"},
-      {t:"割に合わない気がする",s:{money:2},r:"がんばってるのにね…。その感覚、大事にしていいよ。"}]},
-    {q:"5年後、今の職場で働いてる自分…想像できる？",o:[
-      {t:"わりと想像できる",s:{future:0},r:"お、未来が描けてるのは強いよ。いい感じ。"},
-      {t:"うーん、どちらとも",s:{future:1},r:"迷うよね。むしろ、それが自然だと思うよ。"},
-      {t:"できない／したくない",s:{future:2,b:2},r:"…そっか。それを正直に言えたの、すごく大事な一歩だよ。"}]},
-    {q:"最後に。「転職」って言葉、今の気持ちに近いのは？",o:[
-      {t:"まだ考えてない",s:{r:0},r:"うん、それでいいの。知っておくだけでも十分だよ。"},
-      {t:"情報だけは知りたい",s:{r:1},r:"かしこい。情報を持ってる人が、いちばん強いんだよ。"},
-      {t:"わりと本気で考えてる",s:{r:2},r:"その気持ち、大切にしよ。ちゃんと応援するからね。"}]}
+      {t:"給料・待遇",s:{money:2,b:1},sv:{yaku:1},why:{yaku:"「給料・待遇」がいちばんのモヤモヤだったから"},r:"なるほど、お金かぁ。生活に直結するもんね、大事なとこ。"},
+      {t:"人間関係",s:{relations:2,b:2},sv:{pharma:2},why:{pharma:"「人間関係」がいちばんのモヤモヤだったから"},r:"あー…人間関係ね。それ、いちばん心をすり減らすやつだ。"},
+      {t:"残業・休日・忙しさ",s:{time:2,b:2},sv:{yaku:2},why:{yaku:"「残業・休日・忙しさ」がいちばんのモヤモヤだったから"},r:"時間かぁ。ちゃんと休めないの、ほんとにしんどいよね。"},
+      {t:"将来・キャリアの不安",s:{future:2,b:1},sv:{apo:1},why:{apo:"「将来・キャリアの不安」がいちばんのモヤモヤだったから"},r:"将来のこと考えてるの、それだけで前向きな証拠だよ。"}]},
+    {q:"もし動くとしたら、いつ頃をイメージしてる？",o:[
+      {t:"半年以内には動きたい",s:{r:3},r:"うん、はっきりしてるね。それなら話は早いよ。"},
+      {t:"1年くらいかけて考えたい",s:{r:2},r:"いいと思う。時間があるうちに見ておくのがいちばんラクだよ。"},
+      {t:"まだ決めてない",s:{r:1},r:"それでいいの。決めてから調べる必要なんてないよ。"},
+      {t:"動く気はない。情報だけ見たい",s:{r:0},r:"うんうん、知っておくだけでも十分だよ。"}]},
+    {q:"次に働くなら、どの働き方まで見てみたい？",o:[
+      {t:"正社員でしっかり",s:{},r:"了解。腰を据えるやつだね。"},
+      {t:"パート・時短も見たい",s:{},sv:{yaku:1},why:{yaku:"「パート・時短も見たい」を選んだから"},r:"うん、生活に合わせるの、ぜんぜんアリだと思う。"},
+      {t:"派遣・単発も含めて幅広く",s:{},sv:{yaku:3},why:{yaku:"「派遣・単発も含めて幅広く」を選んだから"},r:"いいね、選択肢は多いほうが強いよ。"},
+      {t:"まだ決めてない",s:{},r:"だよね。そこから決めていこ。"}]},
+    {q:"求人票じゃ分からないこと、何がいちばん知りたい？",o:[
+      {t:"職場の雰囲気・人間関係",s:{},sv:{pharma:3},why:{pharma:"「職場の雰囲気・人間関係が知りたい」を選んだから"},r:"それ、いちばん外から見えないやつだよね。"},
+      {t:"給料と休みの実際",s:{},sv:{pharma:2},why:{pharma:"「給料と休みの実際が知りたい」を選んだから"},r:"求人票の数字と実際がちがう、よく聞く話。"},
+      {t:"仕事の中身・身につくもの",s:{},sv:{apo:2},why:{apo:"「仕事の中身・身につくものが知りたい」を選んだから"},r:"そこ気にする人、伸びるんだよね。"}]},
+    {q:"最後に。相談する相手に望むのはどれ？",o:[
+      {t:"職場を実際に見てきた人",s:{},sv:{pharma:3},why:{pharma:"「職場を実際に見てきた人がいい」を選んだから"},r:"うん、見てきた人の話はやっぱり違うよ。"},
+      {t:"現場の話が通じる人",s:{},sv:{apo:3},why:{apo:"「現場の話が通じる人がいい」を選んだから"},r:"わかる。一から説明しなくていいのはラクだよね。"},
+      {t:"働き方の選択肢を広く出せる人",s:{},sv:{yaku:3},why:{yaku:"「働き方の選択肢を広く出せる人がいい」を選んだから"},r:"選択肢を並べてもらってから決める、いいやり方だと思う。"}]}
   ];
-  var MAXB=9;
+  var MAXB=5;
   var TYPES={
     money:{tn:"年収モヤモヤ型",exp:"arms",ic:'<svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M16 7.5c0-1.7-1.8-2.5-4-2.5S8 5.8 8 7.5 9.8 10 12 10s4 .8 4 2.5S14.2 15 12 15s-4-.8-4-2.5"/></svg>',
       body:"がんばりに給料が見合ってない——その感覚、けっこう当たってることが多いよ。<br>薬剤師の年収は「職場タイプ × 地域」の掛け算。同じ資格でも、選ぶ場所で差が出る。<br>まずは<b>“今の自分の相場”を知る</b>だけで、モヤモヤの正体が見えてくるよ。"},
@@ -199,7 +213,7 @@
       body:"これからの薬剤師は「資格の有無」より<b>“何ができるか”</b>で差がつくと言われてる。<br>対人・在宅・デジタル対応——伸ばす方向を選べば、不安は“準備”に変えられる。<br>大事なのは、今いる場所が伸ばしたい方向と合ってるか、だよ。"}
   };
 
-  var chat=document.getElementById('chat'), sc, idx, hist, lastBot=false;
+  var chat=document.getElementById('chat'), sc, svs, whys, idx, hist, lastBot=false;
   var TD=RM?0:560, GAP=RM?0:280;
   function scv(){var s=chat.lastElementChild;if(s)s.scrollIntoView({behavior:RM?'auto':'smooth',block:'end'});}
   function botRow(inner,exp){
@@ -224,11 +238,11 @@
   }
 
   function start(){
-    chat.innerHTML='';sc={money:0,relations:0,time:0,future:0,b:0,r:0};idx=0;hist=[];lastBot=false;
+    chat.innerHTML='';sc={money:0,relations:0,time:0,future:0,b:0,r:0};svs={pharma:0,yaku:0,apo:0};whys={};idx=0;hist=[];lastBot=false;
     document.getElementById('foot').style.display='none';
     track('start');
     botSay("こんにちは、ゆってぃーです🌿",'peace',function(){
-      botSay("「なんか、しんどい」の正体、7つの質問で一緒にほどいていこ。<br>いまの“おつかれ度”と、モヤモヤの中心がわかるよ。",'peace',function(){
+      botSay("「なんか、しんどい」の正体、6つの質問で一緒にほどいていこ。<br>いまの“おつかれ度”と、モヤモヤの中心がわかるよ。",'peace',function(){
         botSay("あ、これは医学的な診断じゃなくて、気持ちを整理するための目安ね。答えは保存しないから、安心して🌱",'peace',ask);
       });
     });
@@ -236,10 +250,12 @@
   function ask(){
     if(idx>=Q.length)return finish();
     track('q'+(idx+1));
-    botSay("<b>Q"+(idx+1)+" / 7</b>　"+Q[idx].q,idx>=5?'think':'peace',function(){
+    botSay("<b>Q"+(idx+1)+" / "+Q.length+"</b>　"+Q[idx].q,idx>=5?'think':'peace',function(){
       chips(Q[idx].o,function(o){
         userRow(o.t);
         for(var k in o.s){sc[k]=(sc[k]||0)+o.s[k];}
+        if(o.sv){for(var k2 in o.sv){svs[k2]=(svs[k2]||0)+o.sv[k2];}}
+        if(o.why){for(var k3 in o.why){(whys[k3]=whys[k3]||[]).push(o.why[k3]);}}
         idx++;
         if(idx<Q.length){botSay(o.r,'peace',ask);}
         else{botSay(o.r,'peace',function(){botSay("ぜんぶ聞けたよ。ちょっとまとめるね…",'think',finish);});}
@@ -249,17 +265,24 @@
 
   function finish(){
     track('complete');
-    var pct=Math.round(sc.b/MAXB*100),lvl,cls,msg,exp;
-    if(sc.b<=2){lvl="おつかれ度：軽め";cls="low";exp="thumb";msg="今のところ、大きく無理はしてない感じ。えらいよ。この調子で、小さなサインだけ早めに拾っていこ🌿";}
-    else if(sc.b<=5){lvl="おつかれ度：中くらい";cls="mid";exp="arms";msg="じわじわ消耗してるサインが出てるかも。無理してない？一度“何がしんどいか”を分けてみる頃合いだね。";}
+    /* 8〜92 の範囲に収める。0や100は出さない（気持ちの目安なので、振り切った数字にしない） */
+    var pct=Math.round(8+sc.b/MAXB*84),lvl,cls,msg,exp;
+    if(sc.b<=1){lvl="おつかれ度：軽め";cls="low";exp="thumb";msg="今のところ、大きく無理はしてない感じ。えらいよ。この調子で、小さなサインだけ早めに拾っていこ🌿";}
+    else if(sc.b<=3){lvl="おつかれ度：中くらい";cls="mid";exp="arms";msg="じわじわ消耗してるサインが出てるかも。無理してない？一度“何がしんどいか”を分けてみる頃合いだね。";}
     else{lvl="おつかれ度：高め";cls="high";exp="think";msg="うん…かなり消耗してるサインが出てる。でもね、これは弱さじゃなくて、環境の負荷が大きいだけ。まず“逃げ道はある”って知るだけでも、ちょっと息できるよ。";}
     var axes=[["money",sc.money],["relations",sc.relations],["time",sc.time],["future",sc.future]];
     axes.sort(function(a,b){return b[1]-a[1];});
     var T=TYPES[axes[0][1]===0?"future":axes[0][0]];
     var lead;
-    if(sc.r>=2){lead="動くなら“希望条件を言葉にしてから”がいちばん失敗しにくいよ。エリア・年収・譲れない条件の3つが決まってれば、話は一気に進む。";}
+    if(sc.r>=3){lead="動くなら“希望条件を言葉にしてから”がいちばん失敗しにくいよ。エリア・年収・譲れない条件の3つが決まってれば、話は一気に進む。";}
+    else if(sc.r===2){lead="1年くらいかけて動くなら、いまのうちに“どこがどう違うか”だけ見ておくと、あとがラクだよ。";}
     else if(sc.r===1){lead="まだ決めきらなくて大丈夫。まずは自分の希望を整理するところから始めよう。";}
     else{lead="今すぐ動かなくて大丈夫。でも“今の立ち位置”を知っておくと、いざって時に迷わないよ。";}
+
+    /* サービスの突き合わせ：スコア順に並べる。同点は SV の並び順（＝配列の index）で決める。
+       「どこが一番いいか」を出すものではなく、各社が公開している案内と回答を突き合わせただけ。 */
+    var rank=SV.map(function(v,i){return {v:v,sc:svs[v.k]||0,i:i};});
+    rank.sort(function(a,b){return (b.sc-a.sc)||(a.i-b.i);});
 
     botSay("お待たせ！診断できたよ。まずは、いまの“おつかれ度”から🌡️",exp,function(){
       var r=botRow('<div class="rcard"><div class="gauge"><div class="top"><span class="lvl disp lvl-'+cls+'">'+lvl+'</span><span class="pct">'+pct+' / 100</span></div><div class="track"><div class="fill fill-'+cls+'" id="gf"></div></div></div></div>',exp);
@@ -267,42 +290,47 @@
       botSay(msg,exp,function(){
         botSay("それでね、あなたのモヤモヤの“中心”は、たぶんこれ。",T.exp,function(){
           botRow('<div class="rcard tcard"><div class="head"><div class="ic">'+T.ic+'</div><div><div class="tt disp">モヤモヤの中心</div><div class="tn disp">'+T.tn+'</div></div></div><div class="body">'+T.body+'</div></div>',T.exp);
-          botSay("よかったら、次の一歩に使ってね。無理はしなくていいからね🌿",'thumb',showCTA);
+          botSay("そのうえで、あなたの答えに近いことを打ち出してるのは、この順番だったよ。",'peace',function(){
+            botSay("どれが優れてるかを決めるものじゃなくて、<b>各社が公開してる案内と、あなたの答えを突き合わせただけ</b>ね。どこも正社員・パート・派遣を扱ってて、求人数も全国対応も横並びだから、違いが出るのはこのへんだけなんだ。",'peace',showCTA);
+          });
         });
       });
     });
+
+    function svCard(item,primary){
+      var v=item.v, w=(whys[v.k]&&whys[v.k][0])||"";
+      var body=(w?'<b>'+w+'</b><br>':'')+v.pitch;
+      if(!v.link){
+        /* リンク未取得の会社は、広告リンクにしない＝(PR)も付けない。説明だけ置く */
+        return '<div class="btn btn-sec" style="cursor:default">'+v.name+'<small>'+body+'</small></div>';
+      }
+      return '<a class="btn '+(primary?'btn-primary':'btn-sec')+'" href="'+v.link+'" target="_blank" rel="noopener sponsored" data-tr="cta-'+v.k+'">'
+        +(primary?'まず見るなら｜':'')+v.name+'（PR）<small>'+body+'</small></a>'
+        +(primary?'<p class="fine">💡 '+SVTIP+'</p>':'');
+    }
+
     function showCTA(){
       var box=document.createElement('div');box.className='cta';
-      /* 動く気があるか（sc.r）で出す順番を変える。
-         意思がある人＝ASPへ／まだの人＝LINE・記事で温めてからASPを下に置く。
-         「聞くだけでOK」系の文言は使わない（アポプラスの否認条件・partners.md参照）*/
-      var ready=sc.r>=2;
-      /* 主力＝ファルマスタッフ。雇用形態を問わないので分岐なしで全員に出せる。
-         承認条件が「申込から14日以内の電話面談完了」なので、
-         “電話が来る・出られる時間を書いておく”を先に伝えるのが読者にも成果にも効く */
-      var gen='<a class="btn btn-primary" href="'+A8+'" target="_blank" rel="noopener sponsored" data-tr="cta-a8">'
-        +'無料で相談する｜ファルマスタッフ（PR）'
-        +'<small>求人票に出てこない「人員構成」まで、担当者が直接訪問して確認してるのが強み。'
-        +'正社員でも派遣・パートでも相談できるよ</small></a>'
-        +'<p class="fine">💡 登録すると担当者から<b>電話</b>が来るよ。登録のときに<b>出られる時間帯</b>を書いておくと、あとがスムーズ。'
-        +'エリア・年収の下限・譲れない条件の3つを決めてから話すと、出てくる求人がぐっと具体的になるよ。</p>';
-      /* 2社目＝アポプラス（正社員のみ）。リンク未取得なら出さない */
-      var apo=A8_APO
-        ? '<a class="btn btn-sec" href="'+A8_APO+'" target="_blank" rel="noopener sponsored" data-tr="cta-apo">2社目を見るなら｜アポプラス薬剤師（PR）<small>同社によると求人の8割以上は非公開。全国対応で、条件の交渉まで担当者が代わりにやってくれるよ</small></a>'
-          +'<p class="fine">※アポプラス薬剤師は、正社員での転職を希望する薬剤師資格をお持ちの方が対象です。派遣・パート希望の方、独立・開局のご相談は対象外です。</p>'
-        : '';
+      var usedPrimary=false, svHtml='';
+      rank.forEach(function(item){
+        var primary=(!usedPrimary&&!!item.v.link);
+        if(primary)usedPrimary=true;
+        svHtml+=svCard(item,primary);
+      });
       var line='<a class="btn btn-line" href="'+LINE+'" target="_blank" rel="noopener" data-tr="cta-line">🌿 まだ動かない人へ｜LINEで“働き方のヒント”を受け取る<small>ゆってぃーから、年収・人間関係の話を数日おきに。いつでもブロックOK</small></a>';
-      var cmp='<a class="btn btn-sec" href="'+COMPARE+'" target="_blank" rel="noopener" data-tr="cta-compare">サービスの選び方を先に読む（比較記事）</a>';
+      var cmp='<a class="btn btn-sec" href="'+COMPARE+'" target="_blank" rel="noopener" data-tr="cta-compare">3社の違いを表で見る（比較記事）</a>';
       var prf='<a class="btn btn-sec" href="'+PROFILE+'" target="_blank" rel="noopener" data-tr="cta-profile">ほかの記事も読んでみる</a>';
+      /* 半年以内＝サービスを先に。まだの人＝LINEを先に置いてから同じものを出す（隠さない） */
+      var ready=sc.r>=3;
       box.innerHTML=
         '<div class="adnote"><span class="pin"></span><span><b>広告を含みます。</b>'+lead+'</span></div>'+
-        (ready ? (gen+apo+line+cmp+prf) : (cmp+line+gen+apo+prf));
+        (ready ? (svHtml+cmp+line+prf) : (line+svHtml+cmp+prf));
       chat.appendChild(box);
       Array.prototype.forEach.call(box.querySelectorAll('a[data-tr]'),function(a){
         a.addEventListener('click',function(){track(a.getAttribute('data-tr'));});
       });
       var fine=document.createElement('p');fine.className='fine';
-      fine.innerHTML='※これは医学的な診断ではなく、気持ちを整理するための目安です（結果は保存されません）。年収・働き方の傾向は各種調査をもとにした一般的な目安で、媒体・調査年により幅があります。効果・結果には個人差があり、転職を無理に勧めるものではありません。';
+      fine.innerHTML='※これは医学的な診断ではなく、気持ちを整理するための目安です（結果は保存されません）。各社の説明は、それぞれの公式サイトで公開されている案内をもとにしたもので、優劣を示すものではありません。効果・結果には個人差があり、転職を無理に勧めるものではありません。';
       chat.appendChild(fine);
       var rs=document.createElement('button');rs.className='restart';rs.textContent='もう一度診断する';rs.onclick=start;
       chat.appendChild(rs);
