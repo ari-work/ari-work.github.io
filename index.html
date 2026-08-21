@@ -263,6 +263,8 @@
 
   function finish(){
     track('complete');
+    /* 回答の分布を計測する（結果の出し分けに使っている sc.r の内訳） */
+    track('r'+sc.r);
     /* 8〜92 の範囲に収める。0や100は出さない（気持ちの目安なので、振り切った数字にしない） */
     var pct=Math.round(8+sc.b/MAXB*84),lvl,cls,msg,exp;
     if(sc.b<=1){lvl="おつかれ度：軽め";cls="low";exp="thumb";msg="今のところ、大きく無理はしてない感じ。えらいよ。この調子で、小さなサインだけ早めに拾っていこ🌿";}
